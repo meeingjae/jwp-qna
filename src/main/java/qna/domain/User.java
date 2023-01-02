@@ -2,18 +2,35 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.util.Objects;
 
-public class User {
-    public static final GuestUser GUEST_USER = new GuestUser();
+@Entity
+@Table(name = "user", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "user_id" })
+})
+public class User extends BaseDateTimeEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "user_id", length = 20, nullable = false)
     private String userId;
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
+    @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
+    protected User() {
+
     }
 
     public User(String userId, String password, String name, String email) {
@@ -100,6 +117,23 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
